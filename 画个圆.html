@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>画个圆</title>
+		<style type="text/css">
+		
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			canvas {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				margin: auto;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<!-- 设置画布大小和id  高宽不用带上“px”-->
+		<canvas id="canvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		window.onload = function(){
+		//	拿到DOM对象
+			var oc = document.getElementById("canvas");
+		//	判断是否拿到
+			if(oc.getContext){
+		//		拿到‘2d’画笔
+				var ctx = oc.getContext('2d');
+		//定义一个用于装随机圆信息的数组
+				var arr = [];
+				
+				setInterval(function(){
+					ctx.clearRect(0,0,oc.width,oc.height);
+					console.log(arr);
+					
+					for(var i=0;i<arr.length;i++){
+					//	当透明度小于零时删除该元素	
+						if(arr[i].alp<0){
+							arr.splice(i,1);
+						}
+					//		增加圆的半径
+							arr[i].r++;
+					//	减小透明度	
+						arr[i].alp-=0.01;
+					}
+				/*         画个圆				*/		
+					for(var i=0;i<arr.length;i++){
+					ctx.save();
+				//	使用内部方式描述颜色和样式的属性。默认值是 #000 （黑色）	
+					ctx.fillStyle = "rgba("+arr[i].red+","+arr[i].green+","+arr[i].blue+","+arr[i].alp+")";
+				//	清空子路径列表开始一个新路径的方法。	
+					ctx.beginPath();
+				//	画个圆
+					ctx.arc(arr[i].x,arr[i].y,arr[i].r,0,2*Math.PI);
+				//	根据当前的填充样式，填充当前或已存在的路径的填充颜色方法
+					ctx.fill();
+					ctx.restore();
+				}
+					
+				},1000/40);
+				
+				
+			//	往arr中塞入随机圆的信息
+				setInterval(function(){
+				//	在控制台看arr数组里的元素情况
+					console.log(arr);
+				//	圆心坐标范围
+					var x = Math.random()*(oc.width-200)+100;
+					var y = Math.random()*(oc.height-200)+100;
+				//	圆的起始半径
+					var r = 10;
+				//	随机颜色的获取
+					var red = 	Math.round(Math.random()*255);
+					var green = Math.round(Math.random()*255);
+					var blue = 	Math.round(Math.random()*255);
+				//	起始透明度
+					var alp = 1;
+				//往arr数组中塞入随机圆的信息
+					arr.push({
+						x:x,
+						y:y,
+						r:r,
+						red:red,
+						green:green,
+						blue:blue,
+						alp:alp
+					})
+				},100);	//每100ms塞一次
+				
+			}
+		}
+	</script>
+</html>
+
+<!--
+	气泡效果要点
+	
+		1.canvas元素的基本用法？
+		
+			1.1	获得绘画功能（2d画笔）
+				var ctx = canvas.getContext('2d');
+			1.2画图的基本格式
+				ctx.save();
+				ctx.beginPath();
+				ctx.restore();
+			1.3填充颜色的选取
+				ctx.fillStyle = "rgba(c1,c2,c3,alp)";(指定颜色)
+				ctx.fill();				 			 (开始填充)
+			1.4画个圆
+				ctx.arc(x,y,r,0,2*Math.PI);
+		2.如何生成随机的圆和随机圆信息的存放，怎么放？
+			2.1生成随机圆
+				x = Math.random()*x;
+				y = Math.random()*y;
+			2.2用一个arr数组存放
+				var arr = [];
+			2.3怎么放
+				arr.push({});
+		3.如何控制半径生成动态圆？
+			arr[i].r++;
+		3.如何设置彩色气泡？
+			var red   = Math.round(Math.random()*255);
+			var green = Math.round(Math.random()*255);
+			var blue  = Math.round(Math.random()*255);
+		4.透明度alp如何控制？
+			arr[i].alp-=0.01;
+		5.如何控制存放随机圆信息的数组的大小，避免数组的大小一直增大？
+			当alp为负值时删除这个元素
+			if(arr[i].alp<0)
+				arr.splice(i,0);
+-->
